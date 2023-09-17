@@ -25,7 +25,18 @@
         pkgs.gnumake
       ];
       shellHook = ''
-          source ./scripts/start.sh
+        # TODO: move this
+        WORKDIR=$PWD
+        # ensure we have a working poetry venv
+        export POETRY_VIRTUALENVS_IN_PROJECT=true
+        export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+        pushd $WORKDIR/webserver > /dev/null
+        if [[ -z $(poetry env info -p) ]]; then
+            echo "initializing poetry venv for the first time..."
+            poetry install
+        fi
+        popd > /dev/null
+        source ./scripts/start.sh
       '';
     };
 
