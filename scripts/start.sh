@@ -32,7 +32,8 @@ start-server() {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]] then
-    start-server
+    start-server &
+    caddy run --config $SRC_DIR/Caddyfile
 else
     # not in container; assume `source $MY_PATH` and just load the env/functions
     :
