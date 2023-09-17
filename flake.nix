@@ -1,43 +1,47 @@
 {
   description = "example mixed stack application targeting docker";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/23.11-pre";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/23.11-pre";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
 
-  outputs = { self, nixpkgs }:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-      mainAppDependencies = [
-          pkgs.poetry
-          pkgs.caddy
-          pkgs.glibcLocales  # for potential poetry potholes
-          # for the launcher
-          pkgs.bash
+
+  outputs = { self, nixpkgs, flake-utils, ... }:
+  flake-utils.lib.eachDefaultSystem (system:
+  let
+    pkgs = nixpkgs.legacyPackages.${system};
+    mainAppDependencies = [
+      pkgs.poetry
+      pkgs.caddy
+      pkgs.glibcLocales  # for potential poetry potholes
+      # for the launcher
+      pkgs.bash
+    ];
+  in {
+    devShell = pkgs.mkShell {
+      buildInputs = mainAppDependencies ++ [
+        pkgs.docker
+        pkgs.gnumake
       ];
-    in {
-      devShell.${system} = pkgs.mkShell {
-        buildInputs = mainAppDependencies ++ [
-          pkgs.docker
-          pkgs.gnumake
-        ];
-        shellHook = ''
+      shellHook = ''
           source ./scripts/start.sh
-        '';
-      };
+      '';
+    };
 
-      packages.${system} = {
-        mainApplication = pkgs.stdenv.mkDerivation {
-          name = "main application";
+    packages = {
+      mainApplication = pkgs.stdenv.mkDerivation {
+        name = "main application";
 
-          src = ./.;
+        src = ./.;
 
-          nativeBuildInputs = [
-            pkgs.which
-            pkgs.rsync
-            pkgs.curl
-          ];
+        nativeBuildInputs = [
+          pkgs.which
+          pkgs.rsync
+          pkgs.curl
+        ];
 
-          buildInputs = mainAppDependencies ++ [
+        buildInputs = mainAppDependencies ++ [
             # TODO: link up realpath, dirname, pushd, popd so scratch works
             pkgs.coreutils
           ];
@@ -71,7 +75,7 @@
           '';
         };
       };
-
-    };
+    }
+  );
 }
 
