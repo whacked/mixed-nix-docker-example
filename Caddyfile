@@ -1,0 +1,10 @@
+{
+    auto_https off
+    debug on
+    admin 0.0.0.0:12019
+}
+
+:19999 {
+    reverse_proxy 127.0.0.1:18000
+}
+
