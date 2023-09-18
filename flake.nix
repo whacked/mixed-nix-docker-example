@@ -17,6 +17,7 @@
       pkgs.glibcLocales  # for potential poetry potholes
       # for the launcher
       pkgs.bash
+      pkgs.nodejs
     ];
     goComponent = import ./gocomponent/default.nix { inherit pkgs; };
 

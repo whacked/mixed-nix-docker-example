@@ -4,6 +4,7 @@ import json
 import subprocess as subp
 from fastapi import FastAPI
 from sample_private_repo.core import mad_adder
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI()
@@ -17,7 +18,7 @@ def get_gocomponent_readout():
     return result.stdout.strip()
 
 
-@app.get("/")
+@app.get("/hello")
 def read_root():
     add_result = json.loads(mad_adder(1, 2, 3))
     go_status = get_gocomponent_readout()
@@ -27,3 +28,4 @@ def read_root():
         add_result,
     )
 
+app.mount("/", StaticFiles(directory="dummy-frontend/dist/"), name="static")
