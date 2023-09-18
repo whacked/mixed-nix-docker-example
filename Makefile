@@ -15,5 +15,5 @@ result:
 	nix \
 		--option filter-syscalls false \
 		build .#packages.x86_64-linux.mainApplication \
-		--no-sandbox --print-build-logs
+		--no-sandbox --print-build-logs --impure
 

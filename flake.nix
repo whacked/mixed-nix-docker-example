@@ -69,15 +69,17 @@
         buildPhase = ''
           # this *probably* helps bypass nix's build-time dir at /homeless-shelter where nothing is writable by poetry (it seems? fails silently after announcing install plan)
           export HOME=$PWD
-          # override git+ssh parameters
-          # for a deploy key, add "-i /path/to/deploy.key"
-          export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/tmp/ssh_known_hosts"
-          ssh-keyscan github.com >> /tmp/ssh_known_hosts
-
-          # force the buildkit socket
-          export SSH_AUTH_SOCK=/run/buildkit/ssh_agent.0
+          # override git+ssh parameters for docker+buildkit
+          if [ -e /run/buildkit ]; then
+              # for a deploy key, add "-i /path/to/deploy.key"
+              export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/tmp/ssh_known_hosts"
+              ssh-keyscan github.com >> /tmp/ssh_known_hosts
+              export SSH_AUTH_SOCK=/run/buildkit/ssh_agent.0
+          else
+              export SSH_AUTH_SOCK="${builtins.getEnv "SSH_AUTH_SOCK"}"
+          fi
+          # sanity check?
           ssh-add -L
-
           mkdir -p $out
           rsync -av $src/ $out/src
           chmod -R u+rw $out/src
@@ -91,6 +93,11 @@
           # or it's just poetry shenanigans: --no-ansi https://github.com/python-poetry/poetry/issues/7148#issuecomment-1363018085
           # --no-ansi does seem critical
           poetry install -vvv --no-ansi --only main
+
+          cd $out/src/webserver/dummy-frontend
+          npm i
+          npm run build
+          rm -rf node_modules
         '';
 
         installPhase = ''

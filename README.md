@@ -60,11 +60,13 @@ INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
 in another terminal
 
 ```sh
-$ curl http://localhost:18000
+$ curl http://localhost:18000/hello
 {"Hello":"World"}
 $ docker rm -f test-run
 test-run
 ```
+
+[http://localhost:18000]() serves a svelte+typescript example
 
 without using docker:
 
@@ -77,14 +79,33 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
 ```
 
+build a non-docker, single entry point
+
+```
+$ nix develop
+$ make result
+$ ./result/bin/start
+2023/09/18 18:59:58.571	INFO	autosaved config (load with --resume flag)	{"file": "/home/natto/.config/caddy/autosave.json"}
+2023/09/18 18:59:58.571	INFO	serving initial configuration
+2023/09/18 18:59:58.571	INFO	tls	finished cleaning storage units
+INFO:     Started server process [2632748]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
+```
+
 # TODO
 
 - [ ] add devShell tour guide
 - [X] add a go dependency to this project
-- [ ] add a typescript dependency to this project
-- [X] add a package with a private git dependency
+- [X] add a typescript dependency to this project
+- [X] add a package with a private git dependency using git+ssh
   to try this, fork https://github.com/whacked/sample-private-pyproject-repo (or any pyproject repo) to your own github, and run `poetry add git+ssh://git@github.com:youraccount/sample-private-pyproject-repo`.
-  - 😈 we allow this install in `mkDerivation` by using `--no-sandbox`
-  - 😈 we pass in ssh-agent using `DOCKER_BUILDKIT` and force `SSH_AUTH_SOCK` to be world-readable (targeting user `nixbld1` in the builder container)
-  - 😈 we set `SSH_AUTH_SOCK` to the agent file placed by buildkit at `/run/buildkit/ssh_agent.0`
+
+## impure workarounds to enable private resource access
+
+- 😈 we allow this install in `mkDerivation` by using `--no-sandbox`
+- 😈 for non-docker, we pass in SSH_AUTH_SOCK using `--impure`
+- 😈 for docker, we pass in ssh-agent using `DOCKER_BUILDKIT` and force `SSH_AUTH_SOCK` to be world-readable (targeting user `nixbld1` in the builder container)
+- 😈 for docker, we set `SSH_AUTH_SOCK` to the agent file placed by buildkit at `/run/buildkit/ssh_agent.0`
 
