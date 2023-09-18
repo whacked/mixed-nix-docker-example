@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.10"
 fastapi = "^0.103.1"
 uvicorn = "^0.23.2"
+sample-private-repo = {git = "git@github.com:whacked/sample-private-pyproject-repo"}
 
 
 [build-system]

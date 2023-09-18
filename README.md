@@ -1,8 +1,11 @@
 # example project with a nix-managed "mixed stack" app with a docker image builder
 
+
 Inspired by the @mitchellh blog post, [Using Nix with Dockerfiles](https://mitchellh.com/writing/nix-with-dockerfiles), this repository contains a sample project with these dev requirements:
 
 1. if you have [Nix](https://nixos.org/) installed, and are on linux/mac, this will Just Work
+
+If you're a nix purist, you may want to turn back now.
 
 More detailed requirements that most devs don't need to care about (but increase difficulty of nixification):
 
@@ -78,4 +81,7 @@ INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
 
 - [ ] add a go dependency to this project
 - [ ] add a typescript dependency to this project
+- [X] add a package with a private git dependency
+  to try this, fork https://github.com/whacked/sample-private-pyproject-repo (or any pyproject repo) to your own github, and run `poetry add git+ssh://git@github.com:youraccount/sample-private-pyproject-repo`.
+  we allow this install in `mkDerivation` by using `--no-sandbox`
 

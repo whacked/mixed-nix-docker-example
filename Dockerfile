@@ -10,8 +10,9 @@ WORKDIR /tmp/build
 
 # Build the environment using Nix
 RUN nix \
-    --option filter-syscalls false \
-    build .#packages.x86_64-linux.mainApplication
+		--option filter-syscalls false \
+		build .#packages.x86_64-linux.mainApplication \
+		--no-sandbox -L
 
 
 RUN mkdir /tmp/nix-store-closure

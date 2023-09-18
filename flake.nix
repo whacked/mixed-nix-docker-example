@@ -50,6 +50,7 @@
           pkgs.which
           pkgs.rsync
           pkgs.curl
+          pkgs.openssh
         ];
 
         buildInputs = mainAppDependencies ++ [
