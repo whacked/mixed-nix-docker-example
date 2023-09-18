@@ -9,15 +9,14 @@ COPY . /tmp/build
 WORKDIR /tmp/build
 
 # Build the environment using Nix
-RUN nix \
+RUN --mount=type=ssh chmod 666 /run/buildkit/ssh_agent.0 && \
+		nix \
 		--option filter-syscalls false \
 		build .#packages.x86_64-linux.mainApplication \
-		--no-sandbox -L
-
+		--no-sandbox --print-build-logs
 
 RUN mkdir /tmp/nix-store-closure
 RUN cp -R $(nix-store -qR /tmp/build/result) /tmp/nix-store-closure
-
 
 # Final image is based on scratch. We copy a bunch of Nix dependencies
 # but they're fully self-contained so we don't need Nix anymore.

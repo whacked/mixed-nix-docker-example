@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-MY_PATH=$(realpath ${BASH_SOURCE[0]})
+
+MY_PATH=${BASH_SOURCE[0]}
+MY_DIR=$(dirname $MY_PATH)
+if [ -e $MY_DIR/paths.sh ]; then
+    source $MY_DIR/paths.sh
+fi
 
 # detect if we are in a git repo and set ROOT_DIR accordingly
 GIT_TOPLEVEL=$(git rev-parse --show-toplevel 2>/dev/null)
@@ -8,7 +13,7 @@ if [ $? -eq 0 ] && [ -n "$GIT_TOPLEVEL" ]; then
     SRC_DIR=$ROOT_DIR
 else
     # assume docker directory layout
-    ROOT_DIR=$(realpath $(dirname $MY_PATH)/../..)
+    ROOT_DIR=$(realpath $(dirname $(realpath ${BASH_SOURCE[0]}))/../..)
     BIN_DIR=$ROOT_DIR/bin
     SRC_DIR=$ROOT_DIR/src
     export PATH=$BIN_DIR:$PATH

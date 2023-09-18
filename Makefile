@@ -1,8 +1,13 @@
 docker-image:
 ifeq ($(shell uname -m),arm64)  # apple silicon
-	docker buildx build --platform=linux/amd64 -t test .
+	DOCKER_BUILDKIT=1 docker buildx build \
+					--platform=linux/amd64 \
+					--ssh=default \
+					-t test . --progress=plain
 else
-	docker build -t test .
+	DOCKER_BUILDKIT=1 docker build \
+					--ssh=default \
+					-t test . --progress=plain
 endif
 
 
@@ -10,5 +15,5 @@ result:
 	nix \
 		--option filter-syscalls false \
 		build .#packages.x86_64-linux.mainApplication \
-		--no-sandbox -L
+		--no-sandbox --print-build-logs
 

@@ -79,9 +79,12 @@ INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
 
 # TODO
 
-- [ ] add a go dependency to this project
+- [ ] add devShell tour guide
+- [X] add a go dependency to this project
 - [ ] add a typescript dependency to this project
 - [X] add a package with a private git dependency
   to try this, fork https://github.com/whacked/sample-private-pyproject-repo (or any pyproject repo) to your own github, and run `poetry add git+ssh://git@github.com:youraccount/sample-private-pyproject-repo`.
-  we allow this install in `mkDerivation` by using `--no-sandbox`
+  - 😈 we allow this install in `mkDerivation` by using `--no-sandbox`
+  - 😈 we pass in ssh-agent using `DOCKER_BUILDKIT` and force `SSH_AUTH_SOCK` to be world-readable (targeting user `nixbld1` in the builder container)
+  - 😈 we set `SSH_AUTH_SOCK` to the agent file placed by buildkit at `/run/buildkit/ssh_agent.0`
 
